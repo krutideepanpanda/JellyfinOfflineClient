@@ -1,50 +1,54 @@
 # Jellyfin Offline Client
 
-A native Android Jellyfin client optimized for the latest devices, featuring **Smart Offline Sync**. This app is designed to provide a seamless offline viewing experience by intelligently managing your local storage.
+Jellyfin Offline Client is a specialized Android application designed for high-performance media consumption with an emphasis on automated offline synchronization. The application is built using modern Android development standards to ensure reliability, security, and a superior user experience.
 
-## 🚀 Core Features
+## Core Functionalities
 
-### 🧠 Smart Offline Sync
-The heart of the app is its intelligent synchronization engine:
-- **Predictive Downloading**: When you start watching a series, the app automatically queues and downloads the next 3 episodes in the background using `WorkManager`.
-- **Automatic Cleanup**: Once you've watched 90% of an episode, it is automatically deleted from local storage to save space.
-- **WiFi Only**: Downloads are restricted to unmetered (WiFi) networks by default to conserve mobile data.
+### Smart Offline Synchronization
+The application features a proprietary synchronization engine designed to optimize local storage while ensuring content availability:
+- **Predictive Background Ingestion**: Utilizing Android WorkManager, the system automatically identifies and downloads the subsequent three episodes of an active series.
+- **Automated Lifecycle Management**: Content is automatically purged from local storage once a 90% completion threshold is reached, maintaining storage efficiency.
+- **Network Constraint Compliance**: Data transfers are restricted to unmetered networks to prevent unauthorized mobile data consumption.
 
-### 🎬 High-Performance Playback
-- Powered by **AndroidX Media3 (ExoPlayer)**.
-- **Hybrid Playback Logic**: The app automatically detects if an episode is available offline and plays the local file for zero-latency startup. If not downloaded, it falls back to high-quality streaming from the Jellyfin server.
+### High-Performance Media Playback
+- **Media3 Integration**: Leverages the AndroidX Media3 (ExoPlayer) framework for robust codec support and adaptive bitrate handling.
+- **Hybrid Source Resolution**: The playback engine dynamically evaluates content availability. It prioritizes local assets for instantaneous playback and seamlessly transitions to remote streaming endpoints when necessary.
 
-### 📱 Modern UI/UX
-- Built entirely with **Jetpack Compose** and **Material 3**.
-- Optimized for a clean, content-first experience.
-- Supports secure authentication via Server URL, Username, and Password.
+### User Interface and Experience
+- **Declarative UI**: Developed using Jetpack Compose and Material Design 3 guidelines for a consistent and responsive interface.
+- **Secure Authentication**: Implements standard Jellyfin authentication protocols for secure session management.
 
-## 🛠 Tech Stack
+## Technical Specifications
 
-- **Language**: Kotlin
+- **Programming Language**: Kotlin 1.9.23
 - **UI Framework**: Jetpack Compose
-- **Media**: AndroidX Media3 (ExoPlayer)
-- **Database**: Room (Offline state tracking)
-- **Background Tasks**: WorkManager
-- **Networking**: Official Jellyfin Kotlin SDK
-- **Architecture**: MVVM (Model-View-ViewModel)
+- **Media Engine**: AndroidX Media3
+- **Persistence Layer**: Room Persistence Library
+- **Background Processing**: WorkManager
+- **API Integration**: Official Jellyfin Kotlin SDK
+- **Design Pattern**: Model-View-ViewModel (MVVM)
 
-## 🛠 Setup & Installation
+## Installation and Configuration
 
-1.  **Clone the Repository**:
+### Prerequisites
+- Android Studio Jellyfish (or more recent versions)
+- Java Development Kit (JDK) 21
+
+### Deployment Process
+1.  **Source Retrieval**:
     ```bash
     git clone https://github.com/krutideepanpanda/JellyfinOfflineClient.git
     ```
-2.  **Open in Android Studio**: Use Android Studio Jellyfish or newer.
-3.  **Build**: Ensure you have **JDK 21** configured in your Gradle settings.
-4.  **Run**: Deploy to your Android device or emulator (Android 8.0+ supported, optimized for Android 14+).
+2.  **Project Initialization**: Open the project directory within Android Studio.
+3.  **Build Execution**: Perform a Gradle build ensuring the environment is configured for JDK 21.
+4.  **Device Deployment**: Deploy the compiled APK to an Android device (Minimum SDK 26, Optimized for SDK 34+).
 
-## 📂 Project Structure
+## Architectural Overview
 
-- `ui/`: Compose screens and ViewModels for Home, Login, Details, and Player.
-- `sync/`: The `SmartSyncManager` and `DownloadWorker` responsible for the offline engine.
-- `data/`: Room database entities and DAOs for tracking offline content.
-- `JellyfinClientManager`: Singleton managing the global Jellyfin API session.
+- `ui`: Contains presentation logic and Compose-based screen definitions.
+- `sync`: Orchestrates the Smart Sync engine and background workers.
+- `data`: Manages the Room database schema and data access objects.
+- `JellyfinClientManager`: Singleton facilitating the global API session state.
 
 ---
-*Built with ❤️ for the Jellyfin Community.*
+© 2026 Jellyfin Offline Client Project. Developed for the Jellyfin community.
