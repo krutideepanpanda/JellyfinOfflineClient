@@ -17,7 +17,7 @@ import org.jellyfin.sdk.api.operations.TvShowsApi
 import java.io.File
 import java.util.UUID
 
-class SmartSyncManager(private val context: Context) {
+class SmartSyncManager(context: Context) {
     
     private val db = AppDatabase.getDatabase(context)
     private val dao = db.offlineEpisodeDao()
@@ -25,16 +25,18 @@ class SmartSyncManager(private val context: Context) {
     
     fun onEpisodeProgress(episodeId: String, showId: String, progressPercentage: Float) {
         CoroutineScope(Dispatchers.IO).launch {
+            val episode = dao.getEpisode(episodeId)
             if (progressPercentage >= 90f) {
                 // User finished the episode, delete it to save space
-                val episode = dao.getEpisode(episodeId)
-                if (episode != null && episode.downloadPath != null) {
+                if ((episode != null) && (episode.downloadPath != null)) {
                     val file = File(episode.downloadPath)
                     if (file.exists()) {
                         file.delete()
                     }
                     dao.deleteEpisode(episodeId)
                 }
+            } else if (episode != null) {
+                dao.insertOrUpdate(episode.copy(progressPercentage = progressPercentage.toInt()))
             }
             
             // Queue next few episodes if not already queued
@@ -52,14 +54,17 @@ class SmartSyncManager(private val context: Context) {
             // Fetch all episodes for the series to find the sequence
             val result = tvShowsApi.getEpisodes(
                 seriesId = UUID.fromString(showId),
-                userId = UUID.fromString(userId)
+                userId = UUID.fromString(userId),
             )
             
-            val episodes = result.content.items ?: return
+            val episodes = result.content.items
             val currentIndex = episodes.indexOfFirst { it.id.toString() == currentEpisodeId }
             if (currentIndex == -1) return
             
-            val nextEpisodes = episodes.drop(currentIndex + 1).take(count)
+            val nextEpisodes = episodes.asSequence()
+                .drop(currentIndex + 1)
+                .take(count)
+                .toList()
             
             for (ep in nextEpisodes) {
                 val epId = ep.id.toString()
@@ -70,10 +75,12 @@ class SmartSyncManager(private val context: Context) {
                         episodeId = epId,
                         showId = showId,
                         seasonId = ep.parentId?.toString() ?: "",
+                        title = ep.name ?: "Episode ${ep.indexNumber ?: 0}",
                         episodeNumber = ep.indexNumber ?: 0,
                         seasonNumber = ep.parentIndexNumber ?: 0,
                         downloadPath = null,
-                        status = DownloadStatus.QUEUED
+                        status = DownloadStatus.QUEUED,
+                        mediaType = "SERIES"
                     )
                     dao.insertOrUpdate(newEpisode)
                     

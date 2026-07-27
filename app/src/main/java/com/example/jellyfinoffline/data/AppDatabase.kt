@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [OfflineEpisode::class], version = 1)
+@Database(entities = [OfflineEpisode::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun offlineEpisodeDao(): OfflineEpisodeDao
 
@@ -18,8 +18,8 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "jellyfin_offline_database"
-                ).build()
+                    "jellyfin_offline_database",
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 instance
             }

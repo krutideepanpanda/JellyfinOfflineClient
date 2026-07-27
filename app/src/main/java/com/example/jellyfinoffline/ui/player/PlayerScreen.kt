@@ -2,15 +2,20 @@ package com.example.jellyfinoffline.ui.player
 
 import android.net.Uri
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FastForward
+import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Speed
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.example.jellyfinoffline.JellyfinClientManager
@@ -25,11 +30,13 @@ import java.io.File
 fun PlayerScreen(
     showId: String,
     episodeId: String,
-    onBack: () -> Unit
+    onBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val exoPlayer = remember { ExoPlayer.Builder(context).build() }
     val smartSyncManager = remember { SmartSyncManager(context) }
+    var playbackSpeed by remember { mutableFloatStateOf(1.0f) }
+    val speeds = listOf(1.0f, 1.25f, 1.5f, 2.0f)
     
     LaunchedEffect(episodeId) {
         withContext(Dispatchers.IO) {
@@ -41,8 +48,6 @@ fun PlayerScreen(
                 MediaItem.fromUri(Uri.fromFile(File(episode.downloadPath)))
             } else {
                 val api = JellyfinClientManager.getApi()
-                // Simple stream URL construction
-                // In a more complex app, you'd use api.mediaInfoApi.getPlaybackInfo to handle transcoding
                 val streamUrl = "${api.baseUrl}/Videos/$episodeId/stream.mp4?api_key=${api.accessToken}"
                 MediaItem.fromUri(Uri.parse(streamUrl))
             }
@@ -55,10 +60,10 @@ fun PlayerScreen(
         }
     }
     
-    // Progress tracking for Smart Sync
+    // Progress tracking for Smart Sync and local SQLite database
     LaunchedEffect(exoPlayer) {
         while (true) {
-            delay(5000) // Check every 5 seconds
+            delay(5000)
             val duration = exoPlayer.duration
             val position = exoPlayer.currentPosition
             if (duration > 0) {
@@ -77,7 +82,7 @@ fun PlayerScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color.Black),
     ) {
         AndroidView(
             factory = { ctx ->
@@ -85,7 +90,47 @@ fun PlayerScreen(
                     player = exoPlayer
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
+
+        // Custom Floating Controls Overlay
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    val newPos = (exoPlayer.currentPosition - 10000).coerceAtLeast(0)
+                    exoPlayer.seekTo(newPos)
+                },
+                colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Black.copy(alpha = 0.6f))
+            ) {
+                Icon(Icons.Default.FastRewind, contentDescription = "-10s", tint = Color.White)
+            }
+
+            IconButton(
+                onClick = {
+                    val newPos = (exoPlayer.currentPosition + 10000).coerceAtMost(exoPlayer.duration)
+                    exoPlayer.seekTo(newPos)
+                },
+                colors = IconButtonDefaults.iconButtonColors(containerColor = Color.Black.copy(alpha = 0.6f))
+            ) {
+                Icon(Icons.Default.FastForward, contentDescription = "+10s", tint = Color.White)
+            }
+
+            AssistChip(
+                onClick = {
+                    val nextIdx = (speeds.indexOf(playbackSpeed) + 1) % speeds.size
+                    playbackSpeed = speeds[nextIdx]
+                    exoPlayer.setPlaybackSpeed(playbackSpeed)
+                },
+                label = { Text("${playbackSpeed}x", color = Color.White) },
+                leadingIcon = { Icon(Icons.Default.Speed, contentDescription = "Speed", tint = Color.White) },
+                colors = AssistChipDefaults.assistChipColors(containerColor = Color.Black.copy(alpha = 0.6f))
+            )
+        }
     }
 }

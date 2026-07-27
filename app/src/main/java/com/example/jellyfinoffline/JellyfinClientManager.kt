@@ -15,9 +15,10 @@ object JellyfinClientManager {
 
     fun init(context: Context) {
         jellyfin = createJellyfin {
+            this.context = context
             clientInfo = ClientInfo(
                 name = "Jellyfin Offline Client",
-                version = "1.0.0"
+                version = "1.0.0",
             )
         }
     }

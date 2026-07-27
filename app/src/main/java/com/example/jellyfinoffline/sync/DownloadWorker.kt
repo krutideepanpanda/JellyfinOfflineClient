@@ -14,8 +14,8 @@ import java.io.FileOutputStream
 import java.net.URL
 
 class DownloadWorker(
-    appContext: Context, 
-    workerParams: WorkerParameters
+    appContext: Context,
+    workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
@@ -43,16 +43,37 @@ class DownloadWorker(
             
             val outputFile = File(jellyfinDir, "$episodeId.mp4")
             
-            // Real download
-            URL(downloadUrl).openStream().use { input ->
+            // Real download with progress reporting
+            val connection = URL(downloadUrl).openConnection()
+            val totalBytes = connection.contentLengthLong
+            
+            connection.getInputStream().use { input ->
                 FileOutputStream(outputFile).use { output ->
-                    input.copyTo(output)
+                    val buffer = ByteArray(8192)
+                    var bytesRead = input.read(buffer)
+                    var totalRead = 0L
+                    var lastReportedProgress = 0f
+                    
+                    while (bytesRead != -1) {
+                        output.write(buffer, 0, bytesRead)
+                        totalRead += bytesRead
+                        
+                        if (totalBytes > 0) {
+                            val progress = (totalRead.toFloat() / totalBytes.toFloat()) * 100f
+                            if (progress - lastReportedProgress >= 5f) {
+                                lastReportedProgress = progress
+                                dao.insertOrUpdate(episode.copy(status = DownloadStatus.DOWNLOADING, progressPercentage = progress))
+                            }
+                        }
+                        bytesRead = input.read(buffer)
+                    }
                 }
             }
             
             dao.insertOrUpdate(
                 episode.copy(
                     status = DownloadStatus.COMPLETED,
+                    progressPercentage = 100f,
                     downloadPath = outputFile.absolutePath
                 )
             )
