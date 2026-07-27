@@ -15,3 +15,7 @@
 capture.png
 *.zip
 gradle_extracted/
+.antigravity/
+.gemini/
+.agents/
+.skills/
