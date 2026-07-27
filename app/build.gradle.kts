@@ -60,6 +60,9 @@ dependencies {
     
     // Jellyfin SDK
     implementation("org.jellyfin.sdk:jellyfin-core:1.1.1")
+    implementation("io.ktor:ktor-client-okhttp:2.3.5")
+    implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+    implementation("io.ktor:serialization-kotlinx-json:2.3.5")
     
     // Media3
     implementation("androidx.media3:media3-exoplayer:1.1.1")
