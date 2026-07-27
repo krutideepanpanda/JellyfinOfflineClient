@@ -36,7 +36,7 @@ class SmartSyncManager(context: Context) {
                     dao.deleteEpisode(episodeId)
                 }
             } else if (episode != null) {
-                dao.insertOrUpdate(episode.copy(progressPercentage = progressPercentage.toInt()))
+                dao.insertOrUpdate(episode.copy(progressPercentage = progressPercentage))
             }
             
             // Queue next few episodes if not already queued
