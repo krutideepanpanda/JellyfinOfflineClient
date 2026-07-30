@@ -20,6 +20,16 @@ object JellyfinClientManager {
                 name = "Jellyfin Offline Client",
                 version = "1.0.0",
             )
+            val prefs = context.getSharedPreferences("jellyfin_prefs", Context.MODE_PRIVATE)
+            var deviceId = prefs.getString("device_id", null)
+            if (deviceId == null) {
+                deviceId = java.util.UUID.randomUUID().toString()
+                prefs.edit().putString("device_id", deviceId).apply()
+            }
+            deviceInfo = org.jellyfin.sdk.model.DeviceInfo(
+                id = deviceId,
+                name = android.os.Build.MODEL ?: "Android Device"
+            )
         }
     }
 

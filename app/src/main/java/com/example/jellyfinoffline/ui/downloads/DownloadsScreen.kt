@@ -112,7 +112,7 @@ fun DownloadsScreen(
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text("Downloading (${ep.progressPercentage.toInt()}%)", style = MaterialTheme.typography.labelSmall)
                                     LinearProgressIndicator(
-                                        progress = ep.progressPercentage / 100f,
+                                        progress = { ep.progressPercentage / 100f },
                                         modifier = Modifier.fillMaxWidth().height(6.dp)
                                     )
                                 } else if (ep.status == DownloadStatus.QUEUED) {

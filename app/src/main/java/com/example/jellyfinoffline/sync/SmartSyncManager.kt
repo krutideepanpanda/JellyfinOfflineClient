@@ -89,7 +89,9 @@ class SmartSyncManager(context: Context) {
                         .build()
                         
                     val constraints = Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.UNMETERED)
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiresBatteryNotLow(true)
+                        .setRequiresStorageNotLow(true)
                         .build()
                         
                     val request = OneTimeWorkRequestBuilder<DownloadWorker>()

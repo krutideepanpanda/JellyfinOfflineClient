@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.jellyfinoffline.ui.login.LoginScreen
 import com.example.jellyfinoffline.ui.home.HomeScreen
+import com.example.jellyfinoffline.ui.library.LibraryScreen
 import com.example.jellyfinoffline.ui.details.ShowDetailsScreen
 import com.example.jellyfinoffline.ui.player.PlayerScreen
 import com.example.jellyfinoffline.ui.downloads.DownloadsScreen
@@ -47,7 +48,28 @@ fun AppNavigation() {
                     },
                     onMovieClick = { movieId ->
                         navController.navigate("player/$movieId/$movieId")
+                    },
+                    onLibraryClick = { libId, libName ->
+                        navController.navigate("library/$libId/$libName")
                     }
+                )
+            }
+            
+            composable(
+                "library/{libraryId}/{libraryName}",
+                arguments = listOf(
+                    navArgument("libraryId") { type = NavType.StringType },
+                    navArgument("libraryName") { type = NavType.StringType }
+                ),
+            ) { backStackEntry ->
+                val libId = backStackEntry.arguments?.getString("libraryId") ?: return@composable
+                val libName = backStackEntry.arguments?.getString("libraryName") ?: return@composable
+                LibraryScreen(
+                    libraryId = libId,
+                    libraryName = libName,
+                    onShowClick = { showId -> navController.navigate("details/$showId") },
+                    onMovieClick = { movieId -> navController.navigate("player/$movieId/$movieId") },
+                    onBack = { navController.popBackStack() }
                 )
             }
             

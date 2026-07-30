@@ -75,4 +75,17 @@ dependencies {
     
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.11.2")
+    
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.2")
+    
+    // Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("androidx.test:core-ktx:1.5.0")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+    testImplementation("com.squareup.okhttp3:okhttp:4.12.0")
+    testImplementation("com.squareup.okio:okio:3.9.0")
+    testImplementation("io.ktor:ktor-client-mock:3.5.1")
 }
