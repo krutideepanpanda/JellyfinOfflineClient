@@ -37,7 +37,7 @@ The application features a proprietary synchronization engine designed to optimi
 ### Deployment Process
 1.  **Source Retrieval**:
     ```bash
-    git clone https://github.com/krutideepanpanda/JellyfinOfflineClient.git
+    git clone https://github.com/krutideepanpanda/Antigravity-jellyfin-client.git
     ```
 2.  **Project Initialization**: Open the project directory within Android Studio.
 3.  **Build Execution**: Perform a Gradle build ensuring the environment is configured for JDK 21.
@@ -51,4 +51,4 @@ The application features a proprietary synchronization engine designed to optimi
 - `JellyfinClientManager`: Singleton facilitating the global API session state.
 
 ---
-© 2026 Jellyfin Offline Client Project. Developed for the Jellyfin community.
+© 2026 Kruti Deepan Panda. This is an unofficial third-party client and is not affiliated with or endorsed by the Jellyfin project.
